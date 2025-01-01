@@ -8,17 +8,19 @@ const getWeatherData = async (city: string) => {
     );
     return response.data;
   } catch (error) {
-    if (error.response) {
-      console.log("Error Status Code:", error.response.status);
-      console.log("Error Data:", error.response.data);
-      return error.response.data.message;
-    } else if (error.request) {
-      console.log("No response received:", error.request);
-      return "No response received";
-    } else {
-      console.log("Error Message:", error.message);
-      return error.message;
-    }
+    console.log(error);
+    return "City Not Found";
+    // if (error.message) {
+    //   console.log("Error Status Code:", error.response.status);
+    //   console.log("Error Data:", error.response.data);
+    //   return error.response.data.message;
+    // } else if (error.request) {
+    //   console.log("No response received:", error.request);
+    //   return "No response received";
+    // } else {
+    //   console.log("Error Message:", error.message);
+    //   return error.message;
+    // }
   }
 };
 

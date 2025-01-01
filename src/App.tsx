@@ -4,18 +4,49 @@ import ApiService from "./services/ApiService";
 
 interface data {
   city: string;
-  weather: [];
-  main: null;
-  wind: null;
+  weather: weather[];
+  main: main;
+  wind: wind;
   error: string | null;
+}
+
+interface main {
+  feels_like: number;
+  humidity: number;
+  pressure: number;
+  temp: number;
+  temp_max: number;
+  temp_min: number;
+}
+
+interface weather {
+  description: string;
+  icon: string;
+}
+
+interface wind {
+  deg: number;
+  speed: number;
+  gust: number;
 }
 
 function App() {
   const [data, setData] = useState<data>({
     city: "",
     weather: [],
-    main: null,
-    wind: null,
+    main: {
+      feels_like: 0,
+      humidity: 0,
+      pressure: 0,
+      temp: 0,
+      temp_max: 0,
+      temp_min: 0,
+    },
+    wind: {
+      deg: 0,
+      speed: 0,
+      gust: 0,
+    },
     error: null,
   });
   const fetchWeatherData = async (e: FormEvent) => {
@@ -23,13 +54,23 @@ function App() {
 
     if (data?.city) {
       const result = await ApiService.getWeatherData(data?.city);
-
       if (typeof result == "string") {
-        console.log(result);
         setData({
           ...data,
           weather: [],
-          main: null,
+          main: {
+            feels_like: 0,
+            humidity: 0,
+            pressure: 0,
+            temp: 0,
+            temp_max: 0,
+            temp_min: 0,
+          },
+          wind: {
+            deg: 0,
+            speed: 0,
+            gust: 0,
+          },
           error: result,
         });
       } else {
@@ -78,12 +119,12 @@ function App() {
           </div>
         )}
 
-        {data.city !== "" && data.weather.length > 0 && (
+        {data.city !== "" && data.weather.length > 0 && data.main !== null && (
           <div className=" bg-blue-200 rounded mt-10 p-5">
             <div className="flex flex-col items-center justify-center">
               {/* <p className="font-bold text-xl text-center capitalize">{city}</p> */}
               <p className="text-center font-bold text-4xl relative">
-                {Math.floor(data.main.temp)}{" "}
+                {Math.floor(data.main?.temp ?? "")}{" "}
                 <span className="text-sm inline-block absolute top-1">°C</span>
               </p>
               <p className="text-center capitalize text-gray-600">
@@ -241,7 +282,7 @@ function App() {
                   )}
                 </div>
                 <div className="w-1/3 flex justify-center items-center -mt-3">
-                  <CompassSVG degree={data.wind.deg} />
+                  <CompassSVG degree={data.wind?.deg ?? ""} />
                 </div>
               </div>
             </div>
