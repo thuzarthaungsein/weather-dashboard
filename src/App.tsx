@@ -1,4 +1,4 @@
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useRef, useState } from "react";
 import CompassSVG from "./components/Compass";
 import ApiService from "./services/ApiService";
 
@@ -31,6 +31,7 @@ interface wind {
 }
 
 function App() {
+  const cityInputRef = useRef("");
   const [data, setData] = useState<data>({
     city: "",
     weather: [],
@@ -49,6 +50,21 @@ function App() {
     },
     error: null,
   });
+
+  const [isDarkMode, setIsDarkMode] = useState(
+    () => localStorage.getItem("theme") === "dark"
+  );
+
+  useEffect(() => {
+    if (isDarkMode) {
+      document.documentElement.classList.add("dark");
+      localStorage.setItem("theme", "dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+      localStorage.setItem("theme", "light");
+    }
+  }, [isDarkMode]);
+
   const fetchWeatherData = async (e: FormEvent) => {
     e.preventDefault();
 
@@ -85,28 +101,72 @@ function App() {
     }
   };
 
+  useEffect(() => {
+    cityInputRef.current.focus();
+  }, []);
+
   return (
-    <div className="w-full">
-      <div className="mt-10 max-w-md mx-auto bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 min-h-[92vh]">
+    <div className="w-full min-h-screen bg-gray-200 dark:bg-gray-950 mt-0 py-10">
+      <div className="max-w-md mx-auto bg-white dark:bg-gray-900 dark:text-white shadow-md rounded px-8 pt-6 pb-8 mb-4 min-h-[88vh]">
         <form className=" " onSubmit={(e) => fetchWeatherData(e)}>
-          <h1 className="text-xl font-bold text-center mb-8">
-            Weather Dashboard
-          </h1>
+          <div className="grid justify-items-stretch grid-cols-2 text-xl font-bold text-center mb-8">
+            <div>Weather Dashboard</div>
+            <div
+              onClick={() => setIsDarkMode(!isDarkMode)}
+              className="justify-self-end cursor-pointer bg-gray-100 dark:bg-gray-700 hover:bg-gray-300  dark:hover:bg-gray-800 dark:border-gray-700 border-0 rounded px-2 pt-1 pb-2 text-gray-500 dark:text-gray-200"
+            >
+              {isDarkMode ? (
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="icon icon-tabler icons-tabler-outline icon-tabler-sun inline-block "
+                >
+                  <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                  <path d="M12 12m-4 0a4 4 0 1 0 8 0a4 4 0 1 0 -8 0" />
+                  <path d="M3 12h1m8 -9v1m8 8h1m-9 8v1m-6.4 -15.4l.7 .7m12.1 -.7l-.7 .7m0 11.4l.7 .7m-12.1 -.7l-.7 .7" />
+                </svg>
+              ) : (
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="icon icon-tabler icons-tabler-outline icon-tabler-moon inline-block "
+                >
+                  <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                  <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+                </svg>
+              )}
+            </div>
+          </div>
           <div className="mb-4">
             <input
               id="city"
               type="text"
+              ref={cityInputRef}
               name={data?.city}
               value={data?.city}
               onChange={(e) => setData({ ...data, city: e.target.value })}
               placeholder="Enter City Name"
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              className="shadow appearance-none border dark:border-0 rounded w-full py-2 px-3 dark:text-gray-300 dark:bg-gray-600  leading-tight focus:outline-none focus:shadow-outline border-gray-200 text-gray-600"
             />
           </div>
           <div className="">
             <button
               type="submit"
-              className="bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full"
+              className="bg-orange-500 hover:bg-orange-700 text-white py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full"
             >
               Get Weather Information
             </button>
@@ -120,14 +180,14 @@ function App() {
         )}
 
         {data.city !== "" && data.weather.length > 0 && data.main !== null && (
-          <div className=" bg-blue-200 rounded mt-10 p-5">
+          <div className=" dark:bg-gray-800 bg-blue-200 rounded mt-10 p-5">
             <div className="flex flex-col items-center justify-center">
               {/* <p className="font-bold text-xl text-center capitalize">{city}</p> */}
               <p className="text-center font-bold text-4xl relative">
                 {Math.floor(data.main?.temp ?? "")}{" "}
                 <span className="text-sm inline-block absolute top-1">°C</span>
               </p>
-              <p className="text-center capitalize text-gray-600">
+              <p className="text-center capitalize dark:text-gray-300 text-gray-600">
                 {data.weather[0]["description"]}
               </p>
               <div className="grid grid-cols-2 gap-8">
@@ -151,7 +211,7 @@ function App() {
             </div>
 
             <div className="grid grid-cols-2 gap-8">
-              <div className="bg-blue-100 p-5 pt-2 rounded">
+              <div className="dark:bg-gray-600 bg-blue-100 p-5 pt-2 rounded">
                 <span className="icon-label">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -194,14 +254,18 @@ function App() {
 
                 <div className="text-xs grid grid-cols-2 gap-4 mt-2 border-b border-b-gray-300 pb-2">
                   <div>Humidity</div>
-                  <div className="text-gray-500">{data.main.humidity}%</div>
+                  <div className="text-gray-500 dark:text-gray-300">
+                    {data.main.humidity}%
+                  </div>
                 </div>
                 <div className="text-xs grid grid-cols-2 gap-4 pt-2">
                   <div>Pressure</div>
-                  <div className="text-gray-500">{data.main.pressure}hPa</div>
+                  <div className="text-gray-500 dark:text-gray-300">
+                    {data.main.pressure}hPa
+                  </div>
                 </div>
               </div>
-              <div className="bg-blue-100 p-5 pt-2 rounded">
+              <div className="dark:bg-gray-600 bg-blue-100 p-5 pt-2 rounded">
                 <span className="icon-label">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -233,13 +297,13 @@ function App() {
                   <span className="text-xs inline-block absolute top-1">
                     °C
                   </span>
-                  <span className="text-xs text-gray-500 font-normal block mt-2">
+                  <span className="text-xs dark:text-gray-300 text-gray-600 font-normal block mt-2">
                     Similar to the actual temperature
                   </span>
                 </p>
               </div>
             </div>
-            <div className="grid grid-cols-1 bg-blue-100 p-5 pt-2 pr-0 rounded mt-5">
+            <div className="grid grid-cols-1 dark:bg-gray-600 bg-blue-100 p-5 pt-2 pr-0 rounded mt-5">
               <span className="icon-label">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -264,20 +328,26 @@ function App() {
                 <div className="w-2/3 text-xs">
                   {data.wind.speed && (
                     <div className="grid grid-cols-2 gap-4 border-b border-b-gray-300 pb-2">
-                      <div>Wind</div>
-                      <div className="text-gray-400">{data.wind.speed} m/s</div>
+                      <div className="dark:text-white">Wind</div>
+                      <div className="dark:text-gray-300 text-gray-500">
+                        {data.wind.speed} m/s
+                      </div>
                     </div>
                   )}
                   {data.wind.gust && (
                     <div className="grid grid-cols-2 gap-4 border-b border-b-gray-300 py-2">
                       <div>Gusts</div>
-                      <div className="text-gray-400">{data.wind.gust} m/s</div>
+                      <div className="dark:text-gray-300 text-gray-500">
+                        {data.wind.gust} m/s
+                      </div>
                     </div>
                   )}
                   {data.wind.deg && (
                     <div className="grid grid-cols-2 gap-4 pt-2">
                       <div>Direction</div>
-                      <div className="text-gray-400">{data.wind.deg}°</div>
+                      <div className="dark:text-gray-300 text-gray-500">
+                        {data.wind.deg}°
+                      </div>
                     </div>
                   )}
                 </div>
