@@ -112,11 +112,11 @@ function App() {
     <div className="w-full min-h-screen bg-gray-200 dark:bg-gray-950 mt-0 py-10">
       <div className="max-w-md mx-auto bg-white dark:bg-gray-900 dark:text-white shadow-md rounded px-8 pt-6 pb-8 mb-4 min-h-[88vh]">
         <form className=" " onSubmit={(e) => fetchWeatherData(e)}>
-          <div className="grid justify-items-stretch grid-cols-2 text-xl font-bold text-center mb-8">
+          <div className="flex justify-between text-xl font-bold text-center mb-8">
             <div>Weather Dashboard</div>
             <div
               onClick={() => setIsDarkMode(!isDarkMode)}
-              className="justify-self-end cursor-pointer bg-gray-100 dark:bg-gray-700 hover:bg-gray-300  dark:hover:bg-gray-800 dark:border-gray-700 border-0 rounded px-2 pt-1 pb-2 text-gray-500 dark:text-gray-200"
+              className="cursor-pointer bg-gray-100 dark:bg-gray-700 hover:bg-gray-300  dark:hover:bg-gray-800 dark:border-gray-700 border-0 rounded px-2 pt-1 pb-2 text-gray-500 dark:text-gray-200"
             >
               {isDarkMode ? (
                 <svg
@@ -213,7 +213,7 @@ function App() {
               />
             </div>
 
-            <div className="grid grid-cols-2 gap-8">
+            <div className="grid grid-cols-2 gap-4 sm:gap-8">
               <div className="dark:bg-gray-600 bg-blue-100 p-5 pt-2 rounded">
                 <span className="icon-label">
                   <svg
