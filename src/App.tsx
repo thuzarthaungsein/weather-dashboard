@@ -31,7 +31,7 @@ interface wind {
 }
 
 function App() {
-  const cityInputRef = useRef("");
+  const cityInputRef = useRef<HTMLInputElement>(null);
   const [data, setData] = useState<data>({
     city: "",
     weather: [],
@@ -70,6 +70,7 @@ function App() {
 
     if (data?.city) {
       const result = await ApiService.getWeatherData(data?.city);
+      console.log(result);
       if (typeof result == "string") {
         setData({
           ...data,
@@ -102,7 +103,9 @@ function App() {
   };
 
   useEffect(() => {
-    cityInputRef.current.focus();
+    if (cityInputRef.current) {
+      cityInputRef.current.focus();
+    }
   }, []);
 
   return (
@@ -342,14 +345,12 @@ function App() {
                       </div>
                     </div>
                   )}
-                  {data.wind.deg && (
-                    <div className="grid grid-cols-2 gap-4 pt-2">
-                      <div>Direction</div>
-                      <div className="dark:text-gray-300 text-gray-500">
-                        {data.wind.deg}°
-                      </div>
+                  <div className="grid grid-cols-2 gap-4 pt-2">
+                    <div>Direction</div>
+                    <div className="dark:text-gray-300 text-gray-500">
+                      {data.wind.deg}°
                     </div>
-                  )}
+                  </div>
                 </div>
                 <div className="w-1/3 flex justify-center items-center -mt-3">
                   <CompassSVG degree={data.wind?.deg ?? ""} />
